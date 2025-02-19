@@ -1,0 +1,580 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>文本转换工具</title>
+    <style>
+        :root { /* 浅色模式变量 */
+            --body-bg-color: #e9e9e9;
+            --body-text-color: #333;
+            --container-bg-color: #f0f0f0;
+            --container-border-color: #ddd;
+            --container-box-shadow-color: rgba(0, 0, 0, 0.1);
+            --title-color: #444;
+            --textarea-bg-color: #f8f8f8;
+            --textarea-border-color: #ddd;
+            --textarea-focus-shadow-color: rgba(0, 123, 255, 0.2);
+            --textarea-text-color: #333;
+            --button-text-color: #333;
+            --button-bg-color-light: rgba(255, 255, 255, 0.4);
+            --button-bg-color-base: #e0e7ef;
+            --button-box-shadow-color-light: rgba(0, 0, 0, 0.1);
+            --button-box-shadow-color-inset-light: rgba(255, 255, 255, 0.3);
+            --button-box-shadow-color-inset-dark: rgba(0, 0, 0, 0.1);
+            --button-hover-bg-color-light: rgba(255, 255, 255, 0.5);
+            --button-hover-bg-color-base: #d0d8e2;
+            --button-hover-box-shadow-color-light: rgba(0, 0, 0, 0.1);
+            --button-hover-box-shadow-color-inset-light: rgba(255, 255, 255, 0.3);
+            --button-hover-box-shadow-color-inset-dark: rgba(0, 0, 0, 0.1);
+            --button-active-bg-color-light: rgba(255, 255, 255, 0);
+            --button-active-bg-color-base: #c0c7d0;
+            --button-active-box-shadow-color-inset-light: rgba(0, 0, 0, 0.2);
+            --button-active-box-shadow-color-inset-dark: rgba(255, 255, 255, 0.4);
+            --button-light-blue-bg-color-base: #b7d2eb;
+            --button-light-blue-hover-bg-color-base: #a3c7e6;
+            --button-light-red-bg-color-base: #ffc8c2;
+            --button-light-red-hover-bg-color-base: #f0b9b3;
+            --button-light-green-bg-color-base: #c2e3c2;
+            --button-light-green-hover-bg-color-base: #b2dac2;
+            --button-light-gray-bg-color-base: #e5e5e5;
+            --button-light-gray-hover-bg-color-base: #dadada;
+            --textbox-button-text-color: #333;
+            --textbox-button-bg-color-light: rgba(255, 255, 255, 0.4);
+            --textbox-button-bg-color-base: #e0e7ef;
+            --textbox-button-hover-bg-color-light: rgba(255, 255, 255, 0.5);
+            --textbox-button-hover-bg-color-base: #d0d8e2;
+            --notification-bg-color: #28a745;
+            --notification-text-color: white;
+            --undo-notification-bg-color: #86c6e5;
+            --undo-notification-text-color: white;
+            --full-width-btn-text-color: #fff;
+            --full-width-btn-bg-color-light: rgba(255, 255, 255, 0.4);
+            --full-width-btn-bg-color-base: #7cbdd8;
+            --full-width-btn-hover-bg-color-light: rgba(255, 255, 255, 0.5);
+            --full-width-btn-hover-bg-color-base: #61a9c7;
+        }
+
+        .dark-mode {
+    --body-bg-color: #2a2a2a; /* 更柔和的深灰色背景 */
+    --body-text-color: #d0d0d0; /* 浅灰色文本，对比度降低 */
+    --container-bg-color: #333333; /* 深灰色容器背景 */
+    --container-border-color: #444; /* 深灰色边框 */
+    --container-box-shadow-color: rgba(0, 0, 0, 0.2); /* 稍微加深的阴影 */
+    --title-color: #e0e0e0; /* 浅灰色标题 */
+    --textarea-bg-color: #404040; /* 深灰色文本框背景 */
+    --textarea-border-color: #555; /* 深灰色文本框边框 */
+    --textarea-focus-shadow-color: rgba(0, 123, 255, 0.3); /* 聚焦时蓝色阴影 */
+    --textarea-text-color: #d0d0d0; /* 浅灰色文本框文字 */
+    --button-text-color: #ffffff; /*  白色按钮文字 - 更亮，更清晰 */
+    --button-bg-color-light: rgba(255, 255, 255, 0.05); /* 按钮浅色光 */
+    --button-bg-color-base: #444; /* 深灰色按钮底色 */
+    --button-box-shadow-color-light: rgba(0, 0, 0, 0.2); /* 按钮阴影 */
+    --button-box-shadow-color-inset-light: rgba(255, 255, 255, 0.05); /* 按钮内阴影浅色光 */
+    --button-box-shadow-color-inset-dark: rgba(0, 0, 0, 0.15); /* 按钮内阴影深色 */
+    --button-hover-bg-color-light: rgba(255, 255, 255, 0.1); /* 悬停按钮浅色光 */
+    --button-hover-bg-color-base: #555; /* 悬停按钮底色 */
+    --button-hover-box-shadow-color-light: rgba(0, 0, 0, 0.2); /* 悬停按钮阴影 */
+    --button-hover-box-shadow-color-inset-light: rgba(255, 255, 255, 0.05); /* 悬停按钮内阴影浅色光 */
+    --button-hover-box-shadow-color-inset-dark: rgba(0, 0, 0, 0.15); /* 悬停按钮内阴影深色 */
+    --button-active-bg-color-light: rgba(255, 255, 255, 0); /* 激活按钮浅色光 */
+    --button-active-bg-color-base: #505050; /* 激活按钮底色 */
+    --button-active-box-shadow-color-inset-light: rgba(0, 0, 0, 0.3); /* 激活按钮内阴影深色 */
+    --button-active-box-shadow-color-inset-dark: rgba(255, 255, 255, 0.1); /* 激活按钮内阴影浅色光 */
+    --button-light-blue-bg-color-base: #6a8ab8; /* 浅蓝色按钮底色 */
+    --button-light-blue-hover-bg-color-base: #7e99c4; /* 浅蓝色悬停按钮底色 */
+    --button-light-red-bg-color-base: #e07a7a; /* 浅红色按钮底色 */
+    --button-light-red-hover-bg-color-base: #e78d8d; /* 浅红色悬停按钮底色 */
+    --button-light-green-bg-color-base: #8ec28e; /* 浅绿色按钮底色 */
+    --button-light-green-hover-bg-color-base: #9dce9d; /* 浅绿色悬停按钮底色 */
+    --button-light-gray-bg-color-base: #555; /* 浅灰色按钮底色 */
+    --button-light-gray-hover-bg-color-base: #666; /* 浅灰色悬停按钮底色 */
+    --textbox-button-text-color: #ffffff; /* 白色 文本框按钮文字 - 更亮，更清晰 */
+    --textbox-button-bg-color-light: rgba(255, 255, 255, 0.05); /* 文本框按钮浅色光 */
+    --textbox-button-bg-color-base: #444; /* 文本框按钮底色 */
+    --textbox-button-hover-bg-color-light: rgba(255, 255, 255, 0.1); /* 文本框按钮悬停浅色光 */
+    --textbox-button-hover-bg-color-base: #555; /* 文本框按钮悬停底色 */
+    --notification-bg-color: #28a745; /* 通知背景色，保持不变 */
+    --notification-text-color: white; /* 通知文字颜色，保持不变 */
+    --undo-notification-bg-color: #86c6e5; /* 撤销通知背景色，保持不变 */
+    --undo-notification-text-color: white; /* 撤销通知文字颜色，保持不变 */
+    --full-width-btn-text-color: #ffffff; /* 白色 全宽按钮文字 - 更亮，更清晰 */
+    --full-width-btn-bg-color-light: rgba(255, 255, 255, 0.05); /* 全宽按钮浅色光 */
+    --full-width-btn-bg-color-base: #6a8ab8; /* 全宽按钮底色 */
+    --full-width-btn-hover-bg-color-light: rgba(255, 255, 255, 0.1); /* 全宽按钮悬停浅色光 */
+    --full-width-btn-hover-bg-color-base: #7e99c4; /* 全宽按钮悬停底色 */
+}
+
+        body {
+            font-family: 'Arial', sans-serif;
+            background-color: var(--body-bg-color);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            margin: 0;
+            padding: 20px;
+            color: var(--body-text-color);
+            transition: background-color 0.3s ease, color 0.3s ease;
+        }
+
+        .container {
+            background-color: var(--container-bg-color);
+            border: 1px solid var(--container-border-color);
+            padding: 30px;
+            border-radius: 15px;
+            box-shadow: 0 8px 20px var(--container-box-shadow-color);
+            width: 90%;
+            max-width: 800px;
+            box-sizing: border-box;
+            position: relative;
+            transition: all 0.3s ease, background-color 0.3s ease;
+            margin: 0 auto;
+            margin-top: -40px;
+        }
+
+        .title {
+            text-align: center;
+            font-size: 30px;
+            font-weight: bold;
+            color: var(--title-color);
+            margin-bottom: 30px;
+            transition: color 0.3s ease;
+        }
+
+        .text-box {
+            position: relative;
+            margin-bottom: 30px;
+            overflow: hidden;
+            transition: all 0.3s ease;
+        }
+
+        textarea {
+            background-color: var(--textarea-bg-color);
+            color: var(--textarea-text-color);
+            width: calc(100% - 20px);
+            padding: 12px;
+            border: 1.5px solid var(--textarea-border-color);
+            border-radius: 10px;
+            font-size: 17px;
+            resize: vertical;
+            min-height: 380px;
+            box-sizing: border-box;
+            overflow-y: hidden;
+            max-height: 700px;
+            transition: border-color 0.3s ease, box-shadow 0.3s ease, background-color 0.3s ease, color 0.3s ease;
+            padding-right: 30px;
+        }
+
+        textarea.scroll-active {
+            overflow-y: auto;
+        }
+
+        textarea:focus {
+            outline: none;
+            border-color: #007bff;
+            box-shadow: 0 2px 6px var(--textarea-focus-shadow-color);
+        }
+
+        .dark-mode textarea:focus {
+            box-shadow: 0 2px 6px var(--textarea-focus-shadow-color);
+        }
+
+        .button-column {
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+            position: fixed;
+            top: 50%;
+            right: calc(50% - 550px);
+            transform: translateY(-50%);
+            transition: all 0.3s ease;
+        }
+
+        .button-column .spacer {
+            height: 15px
+        }
+
+        button {
+            border: none;
+            border-radius: 10px;
+            font-size: 15px;
+            padding: 12px 18px;
+            width: 130px;
+            transition: all 0.1s ease-in-out, color 0.3s ease, background-color 0.3s ease;
+            cursor: pointer;
+            white-space: nowrap;
+            position: relative;
+            color: var(--button-text-color);
+            background: linear-gradient(135deg, var(--button-bg-color-light), rgba(255, 255, 255, 0)), var(--button-bg-color-base);
+            box-shadow: 1.5px 1.5px 2px var(--button-box-shadow-color-light),
+                inset 1px 1px 2px var(--button-box-shadow-color-inset-light),
+                inset -1px -1px 2px var(--button-box-shadow-color-inset-dark);
+        }
+
+        button:hover {
+            background: linear-gradient(135deg, var(--button-hover-bg-color-light), rgba(255, 255, 255, 0)), var(--button-hover-bg-color-base);
+            box-shadow: 0.5px 0.5px 1px var(--button-hover-box-shadow-color-light), inset 0.5px 0.5px 1px var(--button-hover-box-shadow-color-inset-light),
+                inset -0.5px -0.5px 1px var(--button-hover-box-shadow-color-inset-dark);
+        }
+
+        button:active {
+            background: linear-gradient(135deg, var(--button-active-bg-color-light), rgba(255, 255, 255, 0)), var(--button-active-bg-color-base);
+            box-shadow: inset 0.8px 0.8px 1.5px var(--button-active-box-shadow-color-inset-light), inset -1px -1px 1.5px var(--button-active-box-shadow-color-inset-dark);
+            top: 1px;
+            left: 1px;
+        }
+
+        .light-blue-btn {
+            background: linear-gradient(135deg, rgba(255, 255, 255, 0.4), rgba(255, 255, 255, 0)), var(--button-light-blue-bg-color-base);
+        }
+
+        .light-blue-btn:hover {
+            background: linear-gradient(135deg, rgba(255, 255, 255, 0.5), rgba(255, 255, 255, 0)), var(--button-light-blue-hover-bg-color-base);
+        }
+
+        .light-red-btn {
+            background: linear-gradient(135deg, rgba(255, 255, 255, 0.4), rgba(255, 255, 255, 0)), var(--button-light-red-bg-color-base);
+        }
+
+        .light-red-btn:hover {
+            background: linear-gradient(135deg, rgba(255, 255, 255, 0.5), rgba(255, 255, 255, 0)), var(--button-light-red-hover-bg-color-base);
+        }
+
+        .light-green-btn {
+            background: linear-gradient(135deg, rgba(255, 255, 255, 0.4), rgba(255, 255, 255, 0)), var(--button-light-green-bg-color-base);
+        }
+
+        .light-green-btn:hover {
+            background: linear-gradient(135deg, rgba(255, 255, 255, 0.5), rgba(255, 255, 255, 0)), var(--button-light-green-hover-bg-color-base);
+        }
+
+        .light-gray-btn {
+            background: linear-gradient(135deg, rgba(255, 255, 255, 0.4), rgba(255, 255, 255, 0)), var(--button-light-gray-bg-color-base);
+        }
+
+        .light-gray-btn:hover {
+            background: linear-gradient(135deg, rgba(255, 255, 255, 0.5), rgba(255, 255, 255, 0)), var(--button-light-gray-hover-bg-color-base);
+        }
+
+        .text-box-buttons {
+            position: absolute;
+            top: 10px;
+            right: 10px;
+            display: flex;
+            transition: all 0.3s ease;
+            flex-direction: column;
+            gap: 10px;
+        }
+
+        .text-box-buttons button {
+            border-radius: 6px;
+            padding: 6px 10px;
+            font-size: 12px;
+            width: auto;
+            transition: background-color 0.3s ease;
+            white-space: nowrap;
+            color: var(--textbox-button-text-color);
+            background: linear-gradient(135deg, var(--textbox-button-bg-color-light), rgba(255, 255, 255, 0.0)), var(--textbox-button-bg-color-base);
+        }
+
+        .text-box-buttons button:hover {
+            background: linear-gradient(135deg, var(--textbox-button-hover-bg-color-light), rgba(255, 255, 255, 0.0)), var(--textbox-button-hover-bg-color-base);
+        }
+
+
+        .select-row {
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+            margin-bottom: 20px;
+            transition: all 0.3s ease;
+        }
+
+        .notification {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            background-color: var(--notification-bg-color);
+            color: var(--notification-text-color);
+            text-align: center;
+            padding: 10px;
+            font-size: 14px;
+            z-index: 1000;
+            transform: translateY(-100%);
+            transition: transform 0.3s ease;
+        }
+
+        .notification.show {
+            transform: translateY(0);
+        }
+
+        .undo-notification {
+            position: fixed;
+            left: 50%;
+            top: 20%;
+            background-color: var(--undo-notification-bg-color);
+            color: var(--undo-notification-text-color);
+            text-align: center;
+            padding: 12px 20px;
+            font-size: 14px;
+            border-radius: 8px;
+            z-index: 1001;
+            transform: translateX(-50%) translateY(-150%) translateY(-50%);
+            opacity: 1;
+        }
+
+        .undo-notification.show {
+            transform: translateX(-50%) translateY(calc(-150% - 20px)) translateY(-50%);
+            opacity: 0;
+            transition: transform 0.8s ease, opacity 0.8s ease;
+        }
+
+        .full-width-btn {
+            background: linear-gradient(135deg, var(--full-width-btn-bg-color-light), rgba(255, 255, 255, 0)), var(--full-width-btn-bg-color-base);
+            color: var(--full-width-btn-text-color);
+        }
+
+        .full-width-btn:hover {
+            background: linear-gradient(135deg, var(--full-width-btn-hover-bg-color-light), rgba(255, 255, 255, 0)), var(--full-width-btn-hover-bg-color-base);
+        }
+    </style>
+</head>
+
+<body class="dark-mode">
+    <div id="notification" class="notification"></div>
+    <div class="container">
+        <div class="title">文本转换工具</div>
+        <div class="text-box">
+            <textarea id="textInput" placeholder="请输入文本..."></textarea>
+            <div class="text-box-buttons">
+                <button class="copy-btn" onclick="copyText('textInput')">复制</button>
+                <button class="clear-btn" onclick="clearText('textInput')">清空</button>
+            </div>
+        </div>
+        <div class="button-column">
+            <div class="select-row">
+                <button class="light-blue-btn" onclick="convertText('cn', 'tw')">简 转 繁</button>
+                <button class="light-blue-btn" onclick="convertText('tw', 'cn')">繁 转 简</button>
+            </div>
+            <button class="light-red-btn" onclick="removeParenthesesAndAddComma()">去除括号</button>
+            <button class="light-red-btn" onclick="removeChinese()">去除中文</button>
+            <div class="spacer"></div>
+            <button class="light-green-btn" onclick="insertUppercaseNumbers()">大写数字</button>
+            <button class="light-green-btn" onclick="toggleFullWidth()">全/半角</button>
+            <div class="spacer"></div>
+            <button class="light-gray-btn" onclick="undoEdit()">撤销编辑</button>
+            <button class="full-width-btn" onclick="toggleTheme()">切换主题</button>
+        </div>
+    </div>
+    <script src="https://cdn.jsdelivr.net/npm/opencc-js@1.0.5/dist/umd/full.js"></script>
+    <script>
+        const converter = OpenCC.Converter({ from: 'cn', to: 'tw' });
+        let historyStack = [];
+        let isDarkMode = true;
+        const body = document.body; // Store body element for efficiency
+
+        function convertText(from, to) {
+            const textInput = document.getElementById('textInput');
+            const text = textInput.value;
+            addToHistory(text);
+            const convertedText = OpenCC.Converter({ from: from, to: to })(text);
+            textInput.value = convertedText;
+            adjustTextareaHeight('textInput');
+            checkContainerHeight();
+        }
+
+        function showNotification(message) {
+            const notification = document.getElementById('notification');
+            notification.textContent = message;
+            notification.classList.add('show');
+            setTimeout(() => {
+                notification.classList.remove('show');
+            }, 500);
+        }
+
+        async function copyText(textAreaId) {
+            const textElement = document.getElementById(textAreaId);
+            if (!textElement) return;
+            const text = textElement.value;
+            if (text.trim() === '') return; // Early return for empty text
+
+            try {
+                await navigator.clipboard.writeText(text);
+                showNotification('文本已复制');
+            } catch (err) {
+                console.log("old method")
+                textElement.select();
+                document.execCommand('copy');
+                window.getSelection().removeAllRanges();
+                showNotification('文本已复制');
+            }
+        }
+
+        function clearText(textAreaId) {
+            const textElement = document.getElementById(textAreaId);
+            if (textElement.value.trim() === '') return; // Early return for empty text
+            if (textAreaId === 'textInput') {
+                addToHistory(textElement.value);
+            }
+            textElement.value = '';
+            textElement.style.height = '380px';
+            showNotification('文本已清空');
+            checkContainerHeight();
+        }
+
+        function adjustTextareaHeight(textAreaId) {
+            const textarea = document.getElementById(textAreaId);
+            textarea.style.height = 'auto';
+            const contentHeight = textarea.scrollHeight;
+            const finalHeight = Math.min(contentHeight, 700);
+            textarea.style.height = finalHeight + 'px';
+            textarea.classList.toggle('scroll-active', contentHeight > 700); // Use toggle for class
+        }
+
+        function insertUppercaseNumbers() {
+            const simplifiedNumbers = "一二三四五六七八九十";
+            const traditionalNumbers = "壹贰叁肆伍陆柒捌玖拾";
+            const textInput = document.getElementById('textInput');
+            const text = textInput.value;
+            addToHistory(text);
+            textInput.value += (text.trim() !== '' ? '\n' : '') + simplifiedNumbers + '\n' + traditionalNumbers; // Conditional newline
+            adjustTextareaHeight('textInput');
+            checkContainerHeight();
+        }
+
+        function removeParenthesesAndAddComma() {
+                const textInput = document.getElementById('textInput');
+                let text = textInput.value;
+                const previous = text;
+                let modifiedText = text;
+                let tempText;
+
+                do {
+                    tempText = modifiedText;
+                    modifiedText = tempText.replace(/\([^()]*\)|（[^（）]*）/g, '');
+                } while (modifiedText !== tempText);
+
+                let lines = modifiedText.split('\n');
+                for (let i = 0; i < lines.length - 1; i++) {
+                    let line = lines[i].trim();
+                    if (line.length > 0 && !/[，。！？；,\.!?;]/.test(line[line.length - 1])) {
+                        lines[i] = line + '！';
+                    }
+                }
+                modifiedText = lines.join('\n');
+
+                // 新增代码：去除空行
+                const linesWithoutEmpty = modifiedText.split('\n').filter(line => line.trim() !== '');
+                modifiedText = linesWithoutEmpty.join('\n');
+
+
+                if (previous !== modifiedText) {
+                    textInput.value = modifiedText;
+                    adjustTextareaHeight('textInput');
+                    showNotification('已去除（）内文字及空行'); // 修改通知信息
+                    addToHistory(previous);
+                }
+                checkContainerHeight();
+            }
+
+        function undoEdit() {
+            if (historyStack.length > 0) {
+                const lastState = historyStack.pop();
+                const textInput = document.getElementById('textInput');
+                if (textInput.value !== lastState) {
+                    textInput.value = lastState;
+                    adjustTextareaHeight('textInput');
+                    showUndoNotification("已撤销编辑");
+                }
+                checkContainerHeight();
+            } else {
+                showNotification('没有可撤销的编辑');
+            }
+        }
+
+        function removeChinese() {
+            const textInput = document.getElementById('textInput');
+            let text = textInput.value;
+            const newTextLines = text.split('\n')
+                .map(line => /[\u4e00-\u9fa5]/gu.test(line) ? line.replace(/[\u4e00-\u9fa5\p{P}]/gu, '') : line)
+                .filter(line => line.trim() !== '');
+            const newText = newTextLines.join('\n');
+
+            if (text !== newText) { // Compare original text with new text
+                textInput.value = newText;
+                adjustTextareaHeight('textInput');
+                showNotification('已去除中文');
+                addToHistory(text); // Store original text in history
+            }
+            checkContainerHeight();
+        }
+
+
+        function toggleFullWidth() {
+            const textInput = document.getElementById('textInput');
+            let text = textInput.value;
+            addToHistory(text);
+            let fullWidth = "";
+            let isFullWidth = false;
+            for (let i = 0; i < text.length; i++) {
+                const charCode = text.charCodeAt(i)
+                if ((charCode >= 65281 && charCode <= 65374) || charCode === 12288) {
+                    isFullWidth = true;
+                    break;
+                }
+            }
+            if (!isFullWidth) {
+                for (let i = 0; i < text.length; i++) {
+                    const charCode = text.charCodeAt(i);
+                    fullWidth += (charCode >= 33 && charCode <= 126) ? String.fromCharCode(charCode + 65248) : (charCode === 32 ? String.fromCharCode(12288) : text[i]);
+                }
+            } else {
+                for (let i = 0; i < text.length; i++) {
+                    const charCode = text.charCodeAt(i)
+                    fullWidth += ((charCode >= 65281 && charCode <= 65374)) ? String.fromCharCode(charCode - 65248) : (charCode === 12288 ? String.fromCharCode(32) : text[i]);
+                }
+            }
+            if (text !== fullWidth) {
+                textInput.value = fullWidth;
+                adjustTextareaHeight('textInput');
+                showNotification('已切换全/半角');
+            }
+            checkContainerHeight();
+        }
+
+        function checkContainerHeight() {
+            const container = document.querySelector('.container');
+            body.style.overflowY = container.scrollHeight > window.innerHeight ? 'auto' : 'hidden'; // Simplified condition
+        }
+
+        function addToHistory(text) {
+            historyStack.push(text);
+        }
+
+        document.getElementById('textInput').addEventListener('input', function () {
+            addToHistory(this.value);
+            adjustTextareaHeight('textInput');
+            checkContainerHeight();
+        });
+        window.addEventListener('load', checkContainerHeight);
+        window.addEventListener('resize', checkContainerHeight);
+
+        function showUndoNotification(message) {
+            const notification = document.createElement('div');
+            notification.textContent = message;
+            notification.classList.add('undo-notification');
+            body.appendChild(notification);
+
+            setTimeout(() => notification.classList.add('show'), 20); // Shortened and direct
+            setTimeout(() => body.removeChild(notification), 1000); // Shortened and direct
+        }
+
+        function toggleTheme() {
+            isDarkMode = !isDarkMode;
+            body.classList.toggle('dark-mode', isDarkMode);
+        }
+    </script>
+</body>
