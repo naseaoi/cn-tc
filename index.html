@@ -496,21 +496,22 @@
         }
 
         function removeChinese() {
-            const textInput = document.getElementById('textInput');
-            let text = textInput.value;
-            const newTextLines = text.split('\n')
-                .map(line => /[\u4e00-\u9fa5]/gu.test(line) ? line.replace(/[\u4e00-\u9fa5\p{P}]/gu, '') : line)
-                .filter(line => line.trim() !== '');
-            const newText = newTextLines.join('\n');
+    const textInput = document.getElementById('textInput');
+    let text = textInput.value;
+    const previousText = text; // Store previous text for comparison
+    const newTextLines = text.split('\n')
+        .filter(line => !/[\u4e00-\u9fa5]/gu.test(line)) // Keep lines that DO NOT contain Chinese characters
+        .filter(line => line.trim() !== ''); // Remove empty lines (lines with only whitespace)
+    const newText = newTextLines.join('\n');
 
-            if (text !== newText) { // Compare original text with new text
-                textInput.value = newText;
-                adjustTextareaHeight('textInput');
-                showNotification('已去除中文');
-                addToHistory(text); // Store original text in history
-            }
-            checkContainerHeight();
-        }
+    if (previousText !== newText) { // Compare original text with new text
+        textInput.value = newText;
+        adjustTextareaHeight('textInput');
+        showNotification('已去除中文行和空白行'); // Modified notification message to reflect line removal and empty lines removal
+        addToHistory(previousText); // Store original text in history
+    }
+    checkContainerHeight();
+}
 
 
         function toggleFullWidth() {
