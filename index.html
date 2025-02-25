@@ -687,9 +687,9 @@
             const messageDiv = document.getElementById("juan-message");
 
             if (timeComponents.timeDiff > 0) {
-                messageDiv.textContent = `🕘距离娟离开还有${timeComponents.days}天${timeComponents.hours}小时${timeComponents.minutes}秒，舍不得TA😭`;
+                messageDiv.textContent = `🕘距离娟离开还有${timeComponents.days}天${timeComponents.hours}小时，舍不得TA😭`;
             } else {
-                messageDiv.textContent = `🕘娟离开的第${timeComponents.days}天${timeComponents.hours}分钟${timeComponents.seconds}秒，想TA😭`; // Modified to show minutes and seconds for past dates as well for better visibility
+                messageDiv.textContent = `🕘娟离开的第${timeComponents.days}天${timeComponents.hours}小时，想TA😭`; // Modified to show minutes and seconds for past dates as well for better visibility
             }
         }
         function juanMessageUpdate() {
