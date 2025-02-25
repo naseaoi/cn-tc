@@ -58,7 +58,7 @@
 
             /* 新增离开信息样式 */
             --juan-message-bg-color: rgba(255, 255, 255, 0.8);
-            --juan-message-text-color: var(--body-text-color);
+            --juan-message-text-color: rgba(125, 125, 125, 0.8);
         }
 
         .dark-mode {
@@ -112,7 +112,7 @@
 
             /* 新增离开信息样式 (深色模式) */
             --juan-message-bg-color: rgba(0, 0, 0, 0.5);
-            --juan-message-text-color: var(--body-text-color);
+            --juan-message-text-color: rgba(125, 125, 125, 0.8);
         }
 
         body {
@@ -445,15 +445,16 @@
         let historyStack = [];
         let isDarkMode = false;
         const bodyElement = document.getElementById('body');
+        const textInput = document.getElementById('textInput'); // 获取 textarea 元素
 
         function convertText(from, to) {
-            const textInput = document.getElementById('textInput');
             const text = textInput.value;
             addToHistory(text);
             const convertedText = OpenCC.Converter({ from: from, to: to })(text);
             textInput.value = convertedText;
             adjustTextareaHeight('textInput');
             checkContainerHeight();
+            saveTextToLocalStorage(); // 保存文本到 localStorage
         }
 
         function showNotification(message) {
@@ -493,6 +494,7 @@
             textElement.style.height = '380px';
             showNotification('文本已清空');
             checkContainerHeight();
+            saveTextToLocalStorage(); // 保存文本到 localStorage
         }
 
         function adjustTextareaHeight(textAreaId) {
@@ -507,16 +509,15 @@
         function insertUppercaseNumbers() {
             const simplifiedNumbers = "一二三四五六七八九十";
             const traditionalNumbers = "壹贰叁肆伍陆柒捌玖拾";
-            const textInput = document.getElementById('textInput');
             const text = textInput.value;
             addToHistory(text);
             textInput.value += (text.trim() !== '' ? '\n' : '') + simplifiedNumbers + '\n' + traditionalNumbers;
             adjustTextareaHeight('textInput');
             checkContainerHeight();
+            saveTextToLocalStorage(); // 保存文本到 localStorage
         }
 
         function removeParenthesesAndAddComma() {
-            const textInput = document.getElementById('textInput');
             let text = textInput.value;
             const previous = text;
             let modifiedText = text;
@@ -545,6 +546,7 @@
                 adjustTextareaHeight('textInput');
                 showNotification('已去除（）内文字及空行');
                 addToHistory(previous);
+                saveTextToLocalStorage(); // 保存文本到 localStorage
             }
             checkContainerHeight();
         }
@@ -552,11 +554,11 @@
         function undoEdit() {
             if (historyStack.length > 0) {
                 const lastState = historyStack.pop();
-                const textInput = document.getElementById('textInput');
                 if (textInput.value !== lastState) {
                     textInput.value = lastState;
                     adjustTextareaHeight('textInput');
                     showUndoNotification("已撤销编辑");
+                    saveTextToLocalStorage(); // 保存文本到 localStorage
                 }
                 checkContainerHeight();
             } else {
@@ -565,7 +567,6 @@
         }
 
         function removeChinese() {
-            const textInput = document.getElementById('textInput');
             let text = textInput.value;
             const previousText = text;
             const newTextLines = text.split('\n')
@@ -578,13 +579,13 @@
                 adjustTextareaHeight('textInput');
                 showNotification('已去除中文行和空白行');
                 addToHistory(previousText);
+                saveTextToLocalStorage(); // 保存文本到 localStorage
             }
             checkContainerHeight();
         }
 
 
         function toggleFullWidth() {
-            const textInput = document.getElementById('textInput');
             let text = textInput.value;
             addToHistory(text);
             let fullWidth = "";
@@ -611,6 +612,7 @@
                 textInput.value = fullWidth;
                 adjustTextareaHeight('textInput');
                 showNotification('已切换全/半角');
+                saveTextToLocalStorage(); // 保存文本到 localStorage
             }
             checkContainerHeight();
         }
@@ -624,10 +626,11 @@
             historyStack.push(text);
         }
 
-        document.getElementById('textInput').addEventListener('input', function () {
+        textInput.addEventListener('input', function () {
             addToHistory(this.value);
             adjustTextareaHeight('textInput');
             checkContainerHeight();
+            saveTextToLocalStorage(); // 保存文本到 localStorage
         });
         window.addEventListener('load', checkContainerHeight);
         window.addEventListener('resize', checkContainerHeight);
@@ -658,6 +661,23 @@
                 bodyElement.classList.remove('dark-mode');
             }
         }
+
+        // --- 文本记忆功能 ---
+        function loadTextFromLocalStorage() {
+            const savedText = localStorage.getItem('textareaContent');
+            if (savedText) {
+                textInput.value = savedText;
+                adjustTextareaHeight('textInput'); // 页面加载时调整高度
+                checkContainerHeight(); // 页面加载时检查容器高度
+            }
+        }
+
+        function saveTextToLocalStorage() {
+            localStorage.setItem('textareaContent', textInput.value);
+        }
+
+        // 页面加载时加载文本
+        window.addEventListener('load', loadTextFromLocalStorage);
 
         // --- 修改后的离开天数功能 JavaScript ---
         function calculateDaysDetailed() {
