@@ -49,7 +49,9 @@
             --notification-bg-color: #28a745;
             --notification-text-color: white;
             --undo-notification-bg-color: #86c6e5;
+            /* 移除此变量，不再使用 */
             --undo-notification-text-color: white;
+            /* 移除此变量，不再使用 */
             --full-width-btn-text-color: #fff;
             --full-width-btn-bg-color-light: rgba(255, 255, 255, 0.4);
             --full-width-btn-bg-color-base: #7cbdd8;
@@ -103,7 +105,9 @@
             --notification-bg-color: #28a745;
             --notification-text-color: white;
             --undo-notification-bg-color: #86c6e5;
+            /* 移除此变量，不再使用 */
             --undo-notification-text-color: white;
+            /* 移除此变量，不再使用 */
             --full-width-btn-text-color: #ffffff;
             --full-width-btn-bg-color-light: rgba(255, 255, 255, 0.05);
             --full-width-btn-bg-color-base: #6a8ab8;
@@ -314,33 +318,39 @@
             font-size: 14px;
             z-index: 1000;
             transform: translateY(-100%);
-            transition: transform 0.3s ease;
+            transition: transform 0.3s ease, opacity 0.3s ease;
+            /* 修改 transition 时间为 1s */
+            opacity: 0;
+            /* 初始状态透明度为 0 */
         }
 
         .notification.show {
             transform: translateY(0);
-        }
-
-        .undo-notification {
-            position: fixed;
-            left: 50%;
-            top: 20%;
-            background-color: var(--undo-notification-bg-color);
-            color: var(--undo-notification-text-color);
-            text-align: center;
-            padding: 12px 20px;
-            font-size: 14px;
-            border-radius: 8px;
-            z-index: 1001;
-            transform: translateX(-50%) translateY(-150%) translateY(-50%);
             opacity: 1;
+            /* 显示时透明度为 1 */
         }
 
-        .undo-notification.show {
-            transform: translateX(-50%) translateY(calc(-150% - 20px)) translateY(-50%);
-            opacity: 0;
-            transition: transform 0.8s ease, opacity 0.8s ease;
-        }
+        /* 移除 .undo-notification 的样式 */
+        /*.undo-notification {*/
+        /*    position: fixed;*/
+        /*    left: 50%;*/
+        /*    top: 20%;*/
+        /*    background-color: var(--undo-notification-bg-color);*/
+        /*    color: var(--undo-notification-text-color);*/
+        /*    text-align: center;*/
+        /*    padding: 12px 20px;*/
+        /*    font-size: 14px;*/
+        /*    border-radius: 8px;*/
+        /*    z-index: 1001;*/
+        /*    transform: translateX(-50%) translateY(-150%) translateY(-50%);*/
+        /*    opacity: 1;*/
+        /*}*/
+
+        /*.undo-notification.show {*/
+        /*    transform: translateX(-50%) translateY(calc(-150% - 20px)) translateY(-50%);*/
+        /*    opacity: 0;*/
+        /*    transition: transform 0.8s ease, opacity 0.8s ease;*/
+        /*}*/
 
         .full-width-btn {
             background: linear-gradient(135deg, var(--full-width-btn-bg-color-light), rgba(255, 255, 255, 0)), var(--full-width-btn-bg-color-base);
@@ -446,6 +456,7 @@
         let isDarkMode = false;
         const bodyElement = document.getElementById('body');
         const textInput = document.getElementById('textInput'); // 获取 textarea 元素
+        const notification = document.getElementById('notification'); // 获取 notification 元素
 
         function convertText(from, to) {
             const text = textInput.value;
@@ -458,12 +469,12 @@
         }
 
         function showNotification(message) {
-            const notification = document.getElementById('notification');
             notification.textContent = message;
             notification.classList.add('show');
             setTimeout(() => {
                 notification.classList.remove('show');
-            }, 500);
+                notification.textContent = ''; // 清空文本内容
+            }, 1000); // 保持提示框显示 1 秒
         }
 
         async function copyText(textAreaId) {
@@ -557,7 +568,7 @@
                 if (textInput.value !== lastState) {
                     textInput.value = lastState;
                     adjustTextareaHeight('textInput');
-                    showUndoNotification("已撤销编辑");
+                    showNotification("已撤销编辑"); // 直接使用 showNotification
                     saveTextToLocalStorage(); // 保存文本到 localStorage
                 }
                 checkContainerHeight();
@@ -634,16 +645,6 @@
         });
         window.addEventListener('load', checkContainerHeight);
         window.addEventListener('resize', checkContainerHeight);
-
-        function showUndoNotification(message) {
-            const notification = document.createElement('div');
-            notification.textContent = message;
-            notification.classList.add('undo-notification');
-            bodyElement.appendChild(notification);
-
-            setTimeout(() => notification.classList.add('show'), 20);
-            setTimeout(() => bodyElement.removeChild(notification), 1000);
-        }
 
         function toggleTheme() {
             isDarkMode = !isDarkMode;
