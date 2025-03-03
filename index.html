@@ -684,22 +684,17 @@
         function calculateDaysDetailed() {
             const startDate = new Date("2025-03-01");
             const today = new Date();
+            const timeDiff = startDate.getTime() - today.getTime();
 
-            // 直接计算时间差，不需要手动取绝对值，负值自然表示未来日期
-            let timeDiff = startDate.getTime() - today.getTime();
+            // 使用绝对值的总时间差进行计算
+            const totalDiff = Math.abs(timeDiff);
 
-            const days = Math.floor(Math.abs(timeDiff) / (1000 * 60 * 60 * 24)); //  天数计算取绝对值
-            timeDiff -= days * (1000 * 60 * 60 * 24);
+            // 计算各个时间单位
+            const days = Math.floor(totalDiff / (1000 * 60 * 60 * 24));
+            const hours = Math.floor((totalDiff % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
+            const minutes = Math.floor((totalDiff % (1000 * 60 * 60)) / (1000 * 60));
+            const seconds = Math.floor((totalDiff % (1000 * 60)) / 1000);
 
-            const hours = Math.floor(Math.abs(timeDiff) / (1000 * 60 * 60)); // 小时计算取绝对值
-            timeDiff -= hours * (1000 * 60 * 60);
-
-            const minutes = Math.floor(Math.abs(timeDiff) / (1000 * 60)); // 分钟计算取绝对值
-            timeDiff -= minutes * (1000 * 60);
-
-            const seconds = Math.floor(Math.abs(timeDiff) / 1000); // 秒数计算取绝对值
-
-            // 返回天数, 小时, 分钟, 秒数 和 时间差原始值 (用于判断正负)
             return { days, hours, minutes, seconds, timeDiff };
         }
 
@@ -710,12 +705,14 @@
             if (timeComponents.timeDiff > 0) {
                 messageDiv.textContent = `🕘距离娟离开还有${timeComponents.days}天${timeComponents.hours}小时，舍不得TA😭`;
             } else {
-                messageDiv.textContent = `🕘娟离开的第${timeComponents.days}天${timeComponents.hours}小时，想TA😭`; // Modified to show minutes and seconds for past dates as well for better visibility
+                messageDiv.textContent = `🕘娟离开的第${timeComponents.days}天${timeComponents.hours}小时，想TA😭`;
             }
         }
+
         function juanMessageUpdate() {
             updateMessageDetailed();
         }
+
 
         function createEmojiParticle(clientX, clientY) {
             const container = document.getElementById('emoji-particle-container');
